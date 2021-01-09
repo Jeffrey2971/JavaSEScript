@@ -158,6 +158,8 @@ class UnZipFile extends Thread {
         long start = System.currentTimeMillis();
         // 开始解压
         ZipFile zipFile = null;
+        FileOutputStream fos = null;
+        InputStream is = null;
         try {
             zipFile = new ZipFile(srcFile, Charset.forName("GBK"));
             Enumeration<?> entries = zipFile.entries();
@@ -184,16 +186,14 @@ class UnZipFile extends Thread {
                         System.out.println("No need to create");
                     }
                     // 将压缩文件内容写入到这个文件中
-                    InputStream is = zipFile.getInputStream(entry);
-                    FileOutputStream fos = new FileOutputStream(targetFile);
+                    is = zipFile.getInputStream(entry);
+                    fos = new FileOutputStream(targetFile);
                     int len;
                     byte[] buf = new byte[BUFFER_SIZE];
                     while ((len = is.read(buf)) != -1) {
                         fos.write(buf, 0, len);
                     }
-                    fos.close();
-                    is.close();
-                    
+                    fos.flush();
                     if (Boolean.parseBoolean(UnZip.isDelete)){
                         if(srcFile.delete()){
                             System.out.println("成功删除：" + srcFile);
@@ -214,6 +214,20 @@ class UnZipFile extends Thread {
             if(zipFile != null){
                 try {
                     zipFile.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fos != null){
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (is != null){
+                try {
+                    is.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
