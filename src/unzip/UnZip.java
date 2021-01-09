@@ -78,7 +78,7 @@ public class UnZip {
     /**
      * 删除失败的文件名
      */
-    public static final ArrayList<File> deleteFailedNameList = new ArrayList<>();
+    public static final HashSet<File> deleteFailedNameList = new HashSet<>();
 
 
     public static void main(String[] args) {
@@ -105,11 +105,11 @@ public class UnZip {
                             );
                             Set<Map.Entry<File, Exception>> failedElement = unZipFailedMap.entrySet();
                             for (Map.Entry<File, Exception> fileExceptionEntry : failedElement) {
-                                System.out.println(fileExceptionEntry);
+                                System.out.println("文件：" + fileExceptionEntry.getKey() + " 异常：" + fileExceptionEntry.getValue());
                             }
 
                             if (deleteFailedCount > 0) {
-                                System.out.println("另外，还有一些文件删除失败，它们是：");
+                                System.out.println("另外，还有一些文件删除失败，可能是在解压过程中失败了导致它们不被删除，它们是：");
                                 for (File file : deleteFailedNameList) {
                                     System.out.println(file);
                                 }
@@ -128,7 +128,7 @@ public class UnZip {
         System.out.println("提供一个工作路径：");
         workPath = SCANNER.nextLine();
 
-        System.out.println("成功解压完成后是否删除源文件（1、true 2、false）：");
+        System.out.println("成功解压完成后是否删除源文件（true / false）：");
         isDelete = SCANNER.nextLine();
     }
 }
