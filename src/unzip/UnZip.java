@@ -1,9 +1,6 @@
 package unzip;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -154,7 +151,7 @@ class UnZipFile extends Thread {
         } while (!UnZip.isFlag);
     }
 
-    public static void unZip(File srcFile, String destDirPath) throws RuntimeException {
+    public void unZip(File srcFile, String destDirPath) throws RuntimeException {
         long start = System.currentTimeMillis();
         // 开始解压
         ZipFile zipFile = null;
@@ -165,7 +162,16 @@ class UnZipFile extends Thread {
             Enumeration<?> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
-                System.out.println("解压" + entry.getName());
+                File unZipPathName = new File(entry.getName());
+
+                if (!unZipPathName.isDirectory()){
+                    if (unZipPathName.getName().contains(".zip")) {
+                        zipQueue.add(new File(srcFile.getParentFile(), unZipPathName.toString()));
+                        System.out.println("俄罗斯套娃文件：" + unZipPathName);
+                    }
+                }
+
+                System.out.println("解压：" + unZipPathName);
                 // 如果是文件夹，就创建个文件夹
                 if (entry.isDirectory()) {
                     String dirPath = destDirPath + File.separator + entry.getName();
@@ -208,6 +214,7 @@ class UnZipFile extends Thread {
             UnZip.succeedCount++;
             System.out.println("解压完成，耗时：" + (end - start) +" ms");
         } catch (Exception e) {
+            e.printStackTrace();
             UnZip.unZipFailedCount++;
             UnZip.unZipFailedMap.put(srcFile, e);
         } finally {
@@ -263,6 +270,9 @@ class FindZipFile extends Thread {
                     }
                 }
             }
+
         }
+
+
     }
 }
