@@ -53,6 +53,11 @@ public class UnZip {
     public static final HashMap<File, Exception> unZipFailedMap = new HashMap<>();
 
     /**
+     * 删除失败的文件名
+     */
+    public static final HashSet<File> deleteFailedNameList = new HashSet<>();
+
+    /**
      * 找到相关的文件数量
      */
     public static int foundCount = 0;
@@ -72,11 +77,6 @@ public class UnZip {
      */
     public static int deleteFailedCount = 0;
 
-    /**
-     * 删除失败的文件名
-     */
-    public static final HashSet<File> deleteFailedNameList = new HashSet<>();
-
 
     public static void main(String[] args) {
 
@@ -86,6 +86,8 @@ public class UnZip {
 
                 Thread t1 = new Thread(new FindZipFile(new File(workPath)));
                 Thread t2 = new Thread(new UnZipFile(ZIP_QUEUE));
+                t2.setPriority(Thread.MAX_PRIORITY);
+
                 t1.start();
                 t2.start();
 
