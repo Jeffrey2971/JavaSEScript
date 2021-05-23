@@ -11,9 +11,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * @author jeffrey
  * @ClassName: ThreadCopy
- * @Description: 多线程文件复制移动，未测试，不确保安全性
+ * @Description: 多线程文件复制移动
  * @date: 2020/10/18 3:12 上午
- * @version:
+ * @version: 1.2
  * @since JDK 1.8
  */
 
@@ -34,10 +34,29 @@ public class ThreadCopy {
     public static int nameAndContentSameFile;
     public static int renameFileCount;
 
+    /**
+     * MODE：选择模式
+     *      1：复制
+     *      2、移动
+     */
+    private static final String MODE_1 = "1";
+    private static final String MODE_2 = "2";
+
+    /**
+     * 程序遇到同名但内容不同时的操作
+     *      1、跳过
+     *      2、覆盖
+     *      3、生成副本
+     */
+    private static final String DIFF_1 = "1";
+    private static final String DIFF_2 = "2";
+    private static final String DIFF_3 = "3";
+
     public static void main(String[] args) {
         input();
+        System.out.println("处理中... ...");
         if (types.length != 0) {
-            if ("1".equals(mode) || "2".equals(mode) || "3".equals(DIFF)) {
+            if (MODE_1.equals(mode) || MODE_2.equals(mode) || DIFF_1.equals(DIFF) || DIFF_2.equals(DIFF) || DIFF_3.equals(DIFF)) {
                 if (workPath.exists() && savePath.exists()) {
                     Thread t1 = new Thread(new ThreadForFindFiles(QUEUE, workPath, types));
                     Thread t2 = new Thread(new ThreadForCopyFile(QUEUE, savePath));
@@ -81,14 +100,6 @@ public class ThreadCopy {
         }
     }
 
-
-    /**
-     * @description: 读取键盘输入
-     * @author: jeffrey
-     * @date: 2020/12/21
-     * @return: void
-     * @params:
-     */
     private static void input(){
         System.out.println("请输入一个工作路径：");
         workPath = new File(SCANNER.nextLine());
